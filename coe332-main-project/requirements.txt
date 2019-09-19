@@ -1,0 +1,7 @@
+docker-compose
+flask
+requests
+redis
+hotqueue
+geopandas
+matplotlib

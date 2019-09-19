@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+   <meta charset='utf-8'>
+   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+   <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+   <title>Your UFO Data Query</title>
+
+   <!-- CSS Resources -->
+   <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' crossorigin='anonymous'></link>
+   <!-- End CSS Resources -->
+
+   <!-- JS resources -->
+   <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'></script>
+   <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
+   <script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js'></script>
+   <!-- end JS resources -->
+</head>
+
+
+<script>
+   $(document).ready(function () {
+      $("#QueryType").val("All");
+      updateFields("All");      
+   });
+   
+   function popup() {
+      $("#resetModal").show();
+   }
+
+   function cancel() {
+      $("#resetModal").hide();
+   }
+
+   function reset() {
+      window.location.reload();
+   }
+
+   function updateFields(field) {
+      methods = ["All", "Date", "Country", "City", "State", "Shape", "LAT", "LNG", "LAT-LNG"];
+
+      for(var i = 0; i < methods.length; i++) {
+         $("#" + methods[i] + "Fields").hide();
+         if(methods[i] == field) {
+            $("#" + methods[i] + "Fields").show();
+         }
+      }
+   }
+
+   function urlConstruct(field) {
+      methods = ["All", "Date", "Country", "City", "State", "Shape", "LAT", "LNG", "LAT-LNG"]
+      var url = "localhost:5000";
+      if(methods.indexOf(field) == -1) {
+         alert("Something Went Wrong!\nPlease try again later.");
+         return None;
+      }
+
+      switch(field) {
+         case "All":
+            url += "/AllData";
+            break;
+         case "Date":
+            start = ($("#startDateID").val()).split(" ");
+            end = ($("#endDateID").val()).split(" ");
+            
+            url += "/QueryByDate?start=" + start[0] + "%20" + start[1] + "&end=" + end[0] + "%20" + end[1];
+            break;
+         case "Country":
+            country = $("#CountryID").val();
+            url += "/QueryByCountry?country=" + country;
+            break;
+         case "City":
+            City = $("#CityID").val();
+            url += "/QueryByCity?city=" + City;
+            break;
+         case "State":
+            State = $("#StateID").val();
+            url += "/QueryByState?state=" + State;
+            break;
+         case "Shape":
+            Shape = $("#ShapeID").val();
+            url += "/QueryByShape?shape=" + Shape;
+            break;
+         case "LAT":
+            start = $("#startLATID").val();
+            end = $("#endLATID").val();
+            url += "/QueryByLAT?LAT=[" + start + "," + end + "]";
+            break;
+         case "LNG":
+            start = $("#startLNGID").val();
+            end = $("#endLNGID").val();
+            url += "/QueryByLNG?LNG=[" + start + "," + end + "]";
+            break;
+         case "LAT-LNG":
+            startT = $("#bstartLATID").val();
+            endT = $("#bendLATID").val();
+            startG = $("#bstartLNGID").val();
+            endG = $("#bendLNGID").val();
+            url += "/QueryByLocation?LAT=[" + startT + "," + endT + "]" + "&LNG=[" + startG + ", " + endG + "]";
+            break;
+         default:
+            return None;
+      }
+      return url;
+   }
+
+   function query() {
+      field = $("#QueryType").val();
+      url = (urlConstruct(field));
+      
+
+      $("#urlButton").attr("href", url);
+      $("#urlModal").html(url);
+      $("#urlModal").attr("href", url);
+      $("#runQuery").show();
+
+      //alert("<a href='" + url + "' />");
+      //window.location.replace(url);
+   }
+</script>
+
+
+<body>
+   <div class='container-fluid' style='overflow-x: hidden;'>
+      <div class='row'>
+         <div class='pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center'>
+            <h1 class='display-4'>Data Query</h1>
+         </div>
+      </div>
+      <hr>
+      <hr>
+      <hr>
+
+      <div class="row">
+         <div class="col-md-2"></div>
+         <div class="col-md-8">
+            <div class="well">
+               <form class="form-horizontal">
+                  <fieldset>
+                     <legend>Generate a Query</legend>
+
+                     <div class="form-group">
+                        <label for="select" class="col-lg-2 control-label">Query Type</label>
+                        <div class="col-lg-5">
+                           <select class="form-control" id="QueryType">
+                              <option onclick="updateFields('All')" selected="selected" value="All">Query All Data</option>
+                              <option onclick="updateFields('Date')" value="Date">Query by Date Range</option>
+                              <option onclick="updateFields('Country')" value="Country">Query by Country</option>
+                              <option onclick="updateFields('City')" value="City">Query by City</option>
+                              <option onclick="updateFields('State')" value="State">Query by State</option>
+                              <option onclick="updateFields('LAT')" value="LAT">Query by Latitude Range</option>
+                              <option onclick="updateFields('LNG')" value="LNG">Query by Longitude Range</option>
+                              <option onclick="updateFields('LAT-LNG')" value="LAT-LNG">Query by Latitude and Longitude Range</option>
+                           </select>
+                        </div>
+                     </div>
+
+                     <div class="panel panel-info container-fluid">
+                        <div class="panel-heading row">
+                           <h3 class="panel-title">Query Parameters</h3>
+                        </div>
+                        
+                        
+                        
+                        <div class="panel-body" id="AllFields">
+                           <div class="row">
+                              <div class="form-group">
+                                 <h3 style="text-align: center">There are no Parameters Required</h3>
+                              </div>
+                           </div>
+                        </div>
+                     
+                        
+                        <div class="panel-body" id="DateFields" style="display: none">
+                           <div class="row">
+                              <div class="form-group">
+                                 <label for="startDateID" class="col-lg-2 control-label">Start Date</label>
+                                 <div class="col-lg-10">
+                                    <input type="text" class="form-control" id="startDateID" value="4/1/2016 7:05">
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="LegendData">
+                              <div class="row">
+                                 <div class="form-group">
+                                    <label for="endDateID" class="col-lg-2 control-label">End Date</label>
+                                    <div class="col-lg-10">
+                                       <input type="text" class="form-control" id="endDateID" value="4/1/2016 21:45">
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+
+
+                        <div class="panel-body" id="CountryFields" style="display: none">
+                           <div class="row">
+                              <div class="form-group">
+                                 <label for="select" class="col-lg-2 control-label">Country</label>
+                                 <div class="col-lg-5">
+                                    <select class="form-control" id="CountryID">
+                                       <option>USA</option>
+                                       <option>CANADA</option>
+                                    </select>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+
+
+                        <div class="panel-body" id="CityFields" style="display: none">
+                           <div class="row">
+                              <div class="form-group">
+                                 <label for="CityID" class="col-lg-2 control-label">City</label>
+                                 <div class="col-lg-10">
+                                    <input type="text" class="form-control" id="CityID" value="Austin">
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+      
+   
+                        <div class="panel-body" id="StateFields" style="display: none">
+                           <div class="row">
+                              <div class="form-group">
+                                 <label for="StateID" class="col-lg-2 control-label">State Abreviation</label>
+                                 <div class="col-lg-10">
+                                    <input type="text" class="form-control" id="StateID" value="TX">
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+
+
+                        <div class="panel-body" id="ShapeFields" style="display: none">
+                           <div class="row">
+                              <div class="form-group">
+                                 <label for="ShapeID" class="col-lg-2 control-label">Shape</label>
+                                 <div class="col-lg-10">
+                                    <input type="text" class="form-control" id="ShapeID" value="Unknown">
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+   
+   
+   
+                        <div class="panel-body" id="LATFields" style="display: none">
+                           <div class="row">
+                              <div class="form-group">
+                                 <label for="startLATID" class="col-lg-2 control-label">Start Latitude</label>
+                                 <div class="col-lg-4">
+                                    <input type="text" class="form-control" id="startLATID" value="30.1234567">
+                                 </div>
+                                 <label for="endLATID" class="col-lg-2 control-label">End Latitude</label>
+                                    <div class="col-lg-4">
+                                       <input type="text" class="form-control" id="endLATID" value="100.0000000">
+                                    </div>
+                              </div>
+                           </div>
+                        </div>
+
+
+                        <div class="panel-body" id="LNGFields" style="display: none">
+                           <div class="row">
+                              <div class="form-group">
+                                 <label for="startLNGID" class="col-lg-2 control-label">Start Longitude</label>
+                                 <div class="col-lg-4">
+                                    <input type="text" class="form-control" id="startLNGID" value="-100.1234567">
+                                 </div>
+                                 <label for="endLNGID" class="col-lg-2 control-label">End Longitude</label>
+                                 <div class="col-lg-4">
+                                    <input type="text" class="form-control" id="endLNGID" value="100.0000000">
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+   
+
+                        <div class="panel-body" id="LAT-LNGFields" style="display: none">
+                           <div class="row">
+                              <div class="form-group">
+                                 <label for="bstartLNGID" class="col-lg-2 control-label">Start Longitude</label>
+                                 <div class="col-lg-4">
+                                    <input type="text" class="form-control" id="bstartLNGID" value="-100.1234567">
+                                 </div>
+                                 <label for="bendLNGID" class="col-lg-2 control-label">End Longitude</label>
+                                 <div class="col-lg-4">
+                                    <input type="text" class="form-control" id="bendLNGID" value="100.0000000">
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="row">
+                              <div class="form-group">
+                                 <label for="bstartLATID" class="col-lg-2 control-label">Start Latitude</label>
+                                 <div class="col-lg-4">
+                                    <input type="text" class="form-control" id="bstartLATID" value="30.1234567">
+                                 </div>
+                                 <label for="bendLATID" class="col-lg-2 control-label">End Latitude</label>
+                                 <div class="col-lg-4">
+                                    <input type="text" class="form-control" id="bendLATID" value="100.0000000">
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+
+
+                     </div>
+
+                     <div class="form-group">
+                        <div class="col-lg-3">
+                           <button type="button" class="btn btn-default" onclick="popup()">Cancel</button>
+                           <button type="button" class="btn btn-primary" onclick="query()">Submit</button>
+                        </div>
+                     </div>
+                  </fieldset>
+               </form>
+            </div>
+
+
+         </div>
+         <div class="col-md-2"></div>
+      </div>
+
+      <div class="modal" id="resetModal">
+         <div class="modal-dialog">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="cancel()">&times;</button>
+                  <h4 class="modal-title">User Confirmation</h4>
+               </div>
+               <div class="modal-body">
+                  <p>ARE YOU SURE YOU WOULD LIKE TO CLEAR ALL FIELDS?</p>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-danger" onclick="reset(); location.reload();" id="Yes">Yes,
+                     Delete</button>
+                  <button type="button" class="btn btn-success" onclick="cancel()" id="No" autofocus>No, Save</button>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <div class="modal" id="runQuery">
+         <div class="modal-dialog">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="$('#runQuery').hide()">&times;</button>
+                  <h4 class="modal-title">Query Link</h4>
+               </div>
+               <div class="modal-body">
+                  <a id="urlModal" href="">QueryLink</a>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-danger"><a id="urlButton" href="" style="color:white">Go</a></button>
+                  <button type="button" class="btn btn-success" onclick="$('#runQuery').hide()" id="No" autofocus>Nevermind</button>
+               </div>
+            </div>
+         </div>
+      </div>
+
+
+
+   </div>
+</body>
+
+</html>

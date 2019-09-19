@@ -1,0 +1,16 @@
+pipelines:
+  default:
+    - step:
+        name: Docker Runner
+        image: python:3.7
+        caches:
+          - pip
+          - docker
+        services:
+          - docker
+        script:
+          - docker version
+          - docker build --tag=hw3 .
+          - docker run --detach -p 5000:5000 hw3
+          - sleep 5s
+          - curl http://localhost:5000/

@@ -1,0 +1,34 @@
+{
+	"instructors" : [
+		{
+			"name" : "Joon-Yee Chuah",
+			"email" : "jchuah@tacc.utexas.edu"
+		},
+		{
+			"name" : "Ari Kahn",
+			"email" : "akahn@tacc.utexas.edu"
+		},
+		{
+			"name" : "Charlie Dey",
+			"email" : "charlie@tacc.utexas.edu"
+		}
+	],
+	"meeting" : {
+		"days" : ["Tuesday", "Thursday"],
+		"start" : 1100,
+		"end" : 1330,
+		"location" : "GDC 3.248"
+	},
+	"assignments" : [
+		{
+			"name" : "hw1",
+			"url" : "https://bitbucket.org/jchuahtacc/coe332-f2019-hw1",
+			"points" : 10
+		},
+		{
+			"name" : "hw2",
+			"url" : "https://bitbucket.org/jchuahtacc/coe332-f2019-hw2",
+			"points" : 20
+		}
+	]
+}
